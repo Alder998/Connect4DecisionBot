@@ -1453,7 +1453,11 @@ def V3DataBase_generateSingleMatch ():
 
     index1 = f4.isWin(board.transpose()[0], default=1)
     index2 = f4.isWin(board.transpose()[0], default=2)
-    while (index1 != 1) & (index2 != 1):
+
+    boardT = board.transpose()
+    boardIndex = len(boardT[boardT[0] != 0])
+
+    while (index1 != 1) & (index2 != 1) & (boardIndex < 42):
 
         # Select the cells where we can play
         firstPlace = f4.playCells(board.transpose())
@@ -1471,6 +1475,9 @@ def V3DataBase_generateSingleMatch ():
 
         index1 = f4.isWin(board.transpose()[0], default=1)
         index2 = f4.isWin(board.transpose()[0], default=2)
+
+        boardT = board.transpose()
+        boardIndex = len(boardT[boardT[0] != 0])
 
         if index1 == 1:
             board['Win1'] = 1

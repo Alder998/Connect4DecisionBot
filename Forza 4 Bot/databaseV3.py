@@ -11,7 +11,7 @@ data = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 
 
 start = time.time()
 
-totalGames = 200
+totalGames = 1000
 
 games = list()
 for game in range(0, totalGames):
