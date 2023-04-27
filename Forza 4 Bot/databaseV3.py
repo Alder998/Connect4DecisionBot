@@ -11,7 +11,7 @@ data = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 
 
 start = time.time()
 
-totalGames = 1000
+totalGames = 5
 
 games = list()
 for game in range(0, totalGames):
@@ -28,5 +28,12 @@ finalData = pd.concat([data, games], axis = 0)
 finalData.to_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3.xlsx",
                index = False)
 
+print('\n')
+print('Database size:', len(finalData['Win1']))
+print('Total Wins (X):', len(finalData['Win1'][finalData['Win1'] == 1]))
+print('Total Wins (O):', len(finalData['WIn2'][finalData['WIn2'] == 1]))
+
 end = time.time()
+
+print('\n')
 print(totalGames, 'Games Created in:', round((end-start)/60, 0), 'Minutes')
