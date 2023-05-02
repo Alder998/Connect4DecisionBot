@@ -6,11 +6,11 @@ import pandas as pd
 
 #df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSet.xlsx")
 
-df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3.xlsx")
+df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx")
 
 df['Win'] = df['Win1']
 del[df['Win1']]
 del[df['WIn2']]
 
-f4.createModel(df, 2100, version='V3')
+f4.createModel(df, 5000, version='V3')
 

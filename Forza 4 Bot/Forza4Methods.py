@@ -1485,3 +1485,96 @@ def V3DataBase_generateSingleMatch ():
             board['WIn2'] = 1
 
     return board
+
+
+def greedyV3Data(lenSubset):
+
+    import pandas as pd
+    import Forza4Methods as f4
+    import random
+    import numpy as np
+
+    baseDataR = pd.read_excel(
+        r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx")
+    baseData = baseDataR[0:lenSubset]
+    baseData1 = baseData.copy()
+    del [baseData1['Win1']]
+    del [baseData1['WIn2']]
+
+    print('\n')
+    print('Greedy Dataset V3 update in progress...')
+    print('Estimated number of resulting games:', int(round(lenSubset * 0.15, 0)))
+    print('\n')
+
+    greedyGame = list()
+    for iteration, singleGame in enumerate(range(len(baseData1['F7']))):
+
+        game = baseData1.iloc[singleGame]
+
+        sGame = f4.convertToVisualGame(game)
+
+        # print(sGame)
+
+        # Filter for the non-zero Elements
+
+        gameNZ = game[game != 0]
+
+        # Select a random cell from the index, and take the relative value
+
+        randomCell = random.choice(gameNZ.index)
+        valueRandomCell = game[randomCell]
+
+        # Insert the EXACT OPPOSITE value in place of the old one
+
+        if valueRandomCell == 1:
+            newValue = 2
+        if valueRandomCell == 2:
+            newValue = 1
+
+        game = game.copy()
+        game[randomCell] = newValue
+
+        fGame = f4.convertToVisualGame(game)
+
+        lenIndex = (len(game[game == 1]) - len(game[game == 2]))
+
+        # print('\n')
+        # print('Change in:', randomCell)
+        # print(fGame)
+
+        if (lenIndex == 1) | (lenIndex == 0) | (lenIndex == -1):
+            if f4.isWin(game, default=1) == 1:
+                game['Win1'] = 1
+                greedyGame.append(game)
+            if f4.isWin(game, default=2) == 1:
+                game['WIn2'] = 1
+                greedyGame.append(game)
+
+        print('Progress:', round((iteration/lenSubset)*100, 2), '%')
+
+    greedyGame = pd.concat([game for game in greedyGame], axis=1)
+    greedyGame = greedyGame.transpose()
+    greedyGame = greedyGame.fillna(0)
+
+    greedyGame.loc[greedyGame['Win1'] == greedyGame['WIn2'], 'Delete'] = 1
+    greedyGame = greedyGame[greedyGame['Delete'] != 1]
+    del [greedyGame['Delete']]
+
+    newData = pd.concat([baseDataR, greedyGame], axis=0).reset_index()
+    newData = newData.drop_duplicates()
+    del[newData['index']]
+
+    # print(newData)
+
+    print('\n')
+    print('Rows Added:', len(newData['Win1']) - len(baseDataR['Win1']))
+
+    newData.to_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx",
+                     index = False)
+
+    print('\n')
+    print('Database size:', len(newData['Win1']))
+    print('Total Wins (X):', len(newData['Win1'][newData['Win1'] == 1]))
+    print('Total Wins (O):', len(newData['WIn2'][newData['WIn2'] == 1]))
+
+    return newData
