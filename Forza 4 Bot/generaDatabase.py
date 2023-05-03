@@ -12,5 +12,5 @@ df['Win'] = df['Win1']
 del[df['Win1']]
 del[df['WIn2']]
 
-f4.createModel(df, 5000, version='V3')
+f4.createModel(df, testSize=0.20,  version='V3')
 

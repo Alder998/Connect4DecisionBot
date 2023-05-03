@@ -470,7 +470,7 @@ def convertMatchtoSeries(matchBoard):
     return colonna
 
 
-def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=False):
+def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=False, return_decision=False):
 
     import pandas as pd
     import numpy as np
@@ -577,24 +577,32 @@ def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=Fals
     if return_column == True:
         return int(finalDec[1]) - 1
 
+    if return_decision == True:
+        return finalDec
+
     else:
         return fGame
 
 
-def createModel (database, trainSize, version = 'V2'):
+def createModel (database, testSize, version = 'V2'):
 
     import numpy as np
     import pandas as pd
     from sklearn import svm
     from sklearn.linear_model import LogisticRegression
     from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.model_selection import train_test_split
     import pickle
 
+    df = train_test_split(database, test_size=testSize)
 
-    cutOff = trainSize
+    trainSet = df[0]
+    testSet = df[1]
 
-    trainSet = database[:cutOff]
-    testSet = database[cutOff:len(database['Win'])]
+    #cutOff = trainSize
+
+    #trainSet = database[:cutOff]
+    #testSet = database[cutOff:len(database['Win'])]
 
     print('\n')
     print('TOTAL GAMES (TRAIN):', len(trainSet['Win']))
@@ -1496,7 +1504,7 @@ def greedyV3Data(lenSubset):
 
     baseDataR = pd.read_excel(
         r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx")
-    baseData = baseDataR[0:lenSubset]
+    baseData = baseDataR[len(baseDataR) - lenSubset:len(baseDataR)-1]
     baseData1 = baseData.copy()
     del [baseData1['Win1']]
     del [baseData1['WIn2']]
@@ -1578,3 +1586,57 @@ def greedyV3Data(lenSubset):
     print('Total Wins (O):', len(newData['WIn2'][newData['WIn2'] == 1]))
 
     return newData
+
+
+def V3Data_modelVSModelGame ():
+
+    import pandas as pd
+    import Forza4Methods as f4
+    import random
+    import numpy as np
+    import time
+
+    columns = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7',
+               'E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7',
+               'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7',
+               'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7',
+               'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
+               'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7']
+
+    board = pd.DataFrame(data=np.zeros(len(columns)).reshape(1, 42), columns=columns, index=np.zeros(1))
+
+    # Initialize symbols, 1 = 'X', 2 = 'O'
+    symbol = pd.Series([1, 2])
+    move = random.choice(symbol)
+
+    index1 = f4.isWin(board.transpose()[0], default=1)
+    index2 = f4.isWin(board.transpose()[0], default=2)
+
+    boardT = board.transpose()
+    boardIndex = len(boardT[boardT[0] != 0])
+
+    while (index1 != 1) & (index2 != 1) & (boardIndex < 42):
+
+        # Select a cell to play among the admissible
+        randomMove = f4.algoMove(board.transpose(), return_decision=True)
+
+        # play there
+        board[randomMove] = move
+
+        #print(f4.convertToVisualGame(board.transpose()))
+
+        # Define the next to play
+        move = symbol[symbol != move].reset_index()[0][0]
+
+        index1 = f4.isWin(board.transpose()[0], default=1)
+        index2 = f4.isWin(board.transpose()[0], default=2)
+
+        boardT = board.transpose()
+        boardIndex = len(boardT[boardT[0] != 0])
+
+        if index1 == 1:
+            board['Win1'] = 1
+        if index2 == 1:
+            board['WIn2'] = 1
+
+    return board

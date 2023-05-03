@@ -7,11 +7,11 @@ import random
 import Forza4Methods as f4
 import time
 
-data = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3.xlsx")
+data = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx")
 
 start = time.time()
 
-totalGames = 500
+totalGames = 2
 
 games = list()
 for game in range(0, totalGames):
@@ -25,7 +25,7 @@ del[games['index']]
 
 finalData = pd.concat([data, games], axis = 0)
 
-finalData.to_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3.xlsx",
+finalData.to_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx",
                index = False)
 
 print('\n')
