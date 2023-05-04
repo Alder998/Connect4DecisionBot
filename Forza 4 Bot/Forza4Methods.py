@@ -971,8 +971,8 @@ def blockOpponentWin (gameSeries):
 
     ad = playCells(gameSeries)
 
-    hardCodeHor = f4.smartHardCodingHorizontal(gameSeries)
-    hardCodeVert = f4.smartHardCodingVerticalWin(gameSeries)
+    hardCodeHor = f4.smartHardCodingHorizontal(gameSeries, tolerance = 2)
+    hardCodeVert = f4.smartHardCodingVerticalWin(gameSeries, tolerance = 2)
     hardcodeDR = f4.smartHardCodingRight(gameSeries)
     hardcodeDL = f4.smartHardCodingLeft(gameSeries)
 
@@ -1262,9 +1262,14 @@ def fastVerticalWinIdentifier(gameSeries, default = 1):
         return 0
 
 
-def smartHardCodingHorizontal(gameSeries, default = 2.0):
+def smartHardCodingHorizontal(gameSeries, default = 2.0, tolerance = 3):
 
     # HARD CODING ORIZZONTALE
+
+    if tolerance == 3:
+        t = [4, 4, 3]
+    if tolerance == 2:
+        t = [5, 3, 2]
 
     import pandas as pd
     import numpy as np
@@ -1273,9 +1278,9 @@ def smartHardCodingHorizontal(gameSeries, default = 2.0):
     HorComb = list()
     for letter in char:
         i = 0
-        while i < 4:
+        while i < t[0]:
             coordSeries = list()
-            for k in np.arange(0, 4):
+            for k in np.arange(0, t[1]):
                 firstS = letter + str(k + 1)
                 ongoing = letter + str(int(firstS[1]) + i)
                 coordSeries.append(ongoing)
@@ -1287,7 +1292,7 @@ def smartHardCodingHorizontal(gameSeries, default = 2.0):
         combination = pd.Series(combination)
         indexGame = gameSeries[gameSeries.index.isin(combination)]
 
-        if (len(indexGame[indexGame[0] == default]) == 3) & (len(indexGame[indexGame[0] == 0]) == 1):
+        if (len(indexGame[indexGame[0] == default]) == t[2]) & (len(indexGame[indexGame[0] == 0]) == 1):
             win.append(indexGame)
 
 
@@ -1298,11 +1303,16 @@ def smartHardCodingHorizontal(gameSeries, default = 2.0):
         return []
 
 
-def smartHardCodingVerticalWin (gameSeries, default = 2.0):
+def smartHardCodingVerticalWin (gameSeries, default = 2.0, tolerance = 3):
 
     import pandas as pd
     import numpy as np
     import Forza4Methods as f4
+
+    if tolerance == 3:
+        t = [3, 4, 3]
+    if tolerance == 2:
+        t = [4, 3, 2]
 
     lett = ['A', 'B', 'C', 'D', 'E', 'F']
     mapping = [1, 2, 3, 4, 5, 6]
@@ -1311,9 +1321,9 @@ def smartHardCodingVerticalWin (gameSeries, default = 2.0):
     comb = list()
     for numero in numeroS:
         i = 0
-        while i < 3:
+        while i < t[0]:
             coordSeries = list()
-            for k in np.arange(0, 4):
+            for k in np.arange(0, t[1]):
                 firstS = mappingC['lettera'][mappingC['numero'] == (k + 1)].reset_index()['lettera'][0] + str(numero)
                 relNum = mappingC['numero'][mappingC['lettera'] == firstS[0]].reset_index()['numero'][0]
                 ongoing = mappingC['lettera'][mappingC['numero'] == int(relNum) + i].reset_index()['lettera'][0] + str(
@@ -1327,7 +1337,7 @@ def smartHardCodingVerticalWin (gameSeries, default = 2.0):
         combination = pd.Series(combination)
         indexGame = gameSeries[gameSeries.index.isin(combination)]
 
-        if (len(indexGame[indexGame[0] == default]) == 3) & (len(indexGame[indexGame[0] == 0]) == 1):
+        if (len(indexGame[indexGame[0] == default]) >= t[2]) & (len(indexGame[indexGame[0] == 0]) == 1):
             win.append(indexGame)
 
     if len(win) != 0:
