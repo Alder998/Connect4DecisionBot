@@ -490,6 +490,8 @@ def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=Fals
 
     FW = smartForceWin(gameSeriesFormat)
     HC = blockOpponentWin(gameSeriesFormat)
+    #HC = MLBlockOpponentWin(gameSeriesFormat, model = 'SVM', version = 'V1_Opponent',return_decision=True)
+    #print(HC)
 
     # Verifica se si può fare una ultima mossa per vincere
 
@@ -552,16 +554,16 @@ def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=Fals
         # Questo è un test che serve per evitare che l'algoritmo regali una vittoria all'avversario pensando solo a se
         # da bravo egoista quale è
 
-        gameSeriesFormat[0][finalDec] = 1
-
-        if blockOpponentWin(gameSeriesFormat) != 0:
-             filter = decisionDf[decisionDf['% win'] != decisionDf['% win'].max()]
-             finalDec = filter['scenario'][filter['% win'] == filter['% win'].max()].reset_index()['scenario'][0]
-
-             print('Decision: Algorithm (second best)')
-
-        else:
-             print('Decision: Algorithm (first best)')
+        #gameSeriesFormat[0][finalDec] = 1
+        #
+        #if blockOpponentWin(gameSeriesFormat) != 0:
+        #     filter = decisionDf[decisionDf['% win'] != decisionDf['% win'].max()]
+        #     finalDec = filter['scenario'][filter['% win'] == filter['% win'].max()].reset_index()['scenario'][0]
+        #
+        #     print('Decision: Algorithm (second best)')
+        #
+        #else:
+        print('Decision: Algorithm (first best)')
 
     # Facciamo "Giocare il modello"
 
@@ -1640,3 +1642,88 @@ def V3Data_modelVSModelGame ():
             board['WIn2'] = 1
 
     return board
+
+
+def MLBlockOpponentWin (gameSeriesFormat, model = 'SVM', version = 'V2', return_column=False, return_decision=False):
+
+    import pandas as pd
+    import numpy as np
+    import pickle
+    import random
+    import Forza4Methods as f4
+
+    # sGame = convertToVisualGame(game)
+
+
+    # Importiamo i modelli
+
+    if model == 'SVM':
+        model = pickle.load(
+                open(r'C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\SVM_model' + version + '.sav', 'rb'))
+
+    if model == 'Logistic':
+        model = pickle.load(
+            open(r'C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Logistic_model' + version + '.sav', 'rb'))
+
+    if model == 'KNN':
+        model = pickle.load(
+            open(r'C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\KNN_model' + version + '.sav', 'rb'))
+
+        # Creiamo gli scenari possibili per la giocata
+
+    scenarios = f4.generateGameScenarios(gameSeriesFormat)
+
+    valueScenario = list()
+    winChanceSVM = list()
+    for singleGame in scenarios:
+
+        # Prepariamo ogni partita per essere processata
+
+        test = np.array(singleGame['value']).reshape(1, -1)
+        predictionSVM = model.predict_proba(test)[0][1]
+
+        winChanceSVM.append(predictionSVM)
+        valueScenario.append(singleGame['scenario'].unique()[0])
+
+    decisionDf = pd.concat([pd.Series(winChanceSVM), pd.Series(valueScenario)], axis=1).set_axis(['% win',
+                                                                                                      'scenario'],
+                                                                                                     axis=1)
+    print(decisionDf)
+
+    tolNumber = len(gameSeriesFormat[gameSeriesFormat[0] == 1]) + 1
+    #print(tolNumber)
+    tolerance = 0.10
+    decisionDf = decisionDf[decisionDf['% win'] > tolerance]
+    # Decisione Finale
+
+    # print('\n')
+    # print('Where to play:', decisionDf['scenario'][decisionDf['% win'] == decisionDf['% win'].max()].reset_index()['scenario'][0])
+
+    if decisionDf.empty == False:
+
+        finalDec = decisionDf['scenario'][decisionDf['% win'] == decisionDf['% win'].max()].reset_index()['scenario'][0]
+
+        # Facciamo "Giocare il modello"
+
+        gameSeriesFormat[0][finalDec] = 1
+        fGame = f4.convertToVisualGame(gameSeriesFormat[0])
+
+        # test: proviamo a salvare ogni partita che fa
+        # runningData = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\runningData1.xlsx")
+        # runningData = pd.concat([runningData, gameSeriesFormat[0]], axis = 0)
+        # runningData = runningData.transpose()
+        # runningData.to_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\runningData1.xlsx")
+
+        if return_column == True:
+            return int(finalDec[1]) - 1
+
+        if return_decision == True:
+            return finalDec
+
+        else:
+            return fGame
+
+    else:
+        return 0
+
+

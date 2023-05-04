@@ -6,7 +6,7 @@ import pandas as pd
 
 #df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSet.xlsx")
 
-df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx")
+df = pd.read_excel(r"C:\Users\39328\OneDrive\Desktop\Davide\Velleità\Forza 4 Algoritmo\Dataset\finalDataSetV3 - GreedyMix.xlsx").dropna()
 
 df['Win'] = df['Win1']
 del[df['Win1']]

@@ -150,7 +150,7 @@ while not game_over:
                 posx = event.pos[0]
                 col = int(math.floor(posx / SQUARESIZE))
 
-                col = f4.algoMove(f4.convertMatchtoSeries(board), model='KNN', version = 'V2', return_column=True)
+                col = f4.algoMove(f4.convertMatchtoSeries(board), model='SVM', version = 'V3', return_column=True)
 
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
