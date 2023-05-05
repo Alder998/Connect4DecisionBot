@@ -971,7 +971,7 @@ def blockOpponentWin (gameSeries):
 
     ad = playCells(gameSeries)
 
-    hardCodeHor = f4.smartHardCodingHorizontal(gameSeries, tolerance = 2)
+    hardCodeHor = f4.smartHardCodingHorizontal(gameSeries, tolerance = 3)
     hardCodeVert = f4.smartHardCodingVerticalWin(gameSeries, tolerance = 2)
     hardcodeDR = f4.smartHardCodingRight(gameSeries)
     hardcodeDL = f4.smartHardCodingLeft(gameSeries)
