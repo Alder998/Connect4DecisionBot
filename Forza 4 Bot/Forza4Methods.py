@@ -554,16 +554,16 @@ def algoMove(gameSeriesFormat, model = 'SVM', version = 'V2', return_column=Fals
         # Questo è un test che serve per evitare che l'algoritmo regali una vittoria all'avversario pensando solo a se
         # da bravo egoista quale è
 
-        #gameSeriesFormat[0][finalDec] = 1
-        #
-        #if blockOpponentWin(gameSeriesFormat) != 0:
-        #     filter = decisionDf[decisionDf['% win'] != decisionDf['% win'].max()]
-        #     finalDec = filter['scenario'][filter['% win'] == filter['% win'].max()].reset_index()['scenario'][0]
-        #
-        #     print('Decision: Algorithm (second best)')
-        #
-        #else:
-        print('Decision: Algorithm (first best)')
+        gameSeriesFormat[0][finalDec] = 1
+
+        if blockOpponentWin(gameSeriesFormat) != 0:
+             filter = decisionDf[decisionDf['% win'] != decisionDf['% win'].max()]
+             finalDec = filter['scenario'][filter['% win'] == filter['% win'].max()].reset_index()['scenario'][0]
+
+             print('Decision: Algorithm (second best)')
+
+        else:
+             print('Decision: Algorithm (first best)')
 
     # Facciamo "Giocare il modello"
 
