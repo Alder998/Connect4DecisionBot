@@ -965,6 +965,7 @@ def blockOpponentWin (gameSeries):
     import pandas as pd
     import Forza4Methods as f4
     import numpy as np
+    import random
 
     # serve che l'hard-coding sia tra le giocate Ammissibili
     # Questa cosa viene fuori soprattutto quando si ha un hard-coding Obliquo
@@ -972,7 +973,7 @@ def blockOpponentWin (gameSeries):
     ad = playCells(gameSeries)
 
     hardCodeHor = f4.smartHardCodingHorizontal(gameSeries, tolerance = 3)
-    hardCodeVert = f4.smartHardCodingVerticalWin(gameSeries, tolerance = 2)
+    hardCodeVert = f4.smartHardCodingVerticalWin(gameSeries, tolerance = 3)
     hardcodeDR = f4.smartHardCodingRight(gameSeries)
     hardcodeDL = f4.smartHardCodingLeft(gameSeries)
 
